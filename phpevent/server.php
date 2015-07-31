@@ -75,7 +75,7 @@
 	$http->setCallback("/sendfile1", "_sendfile1");
 	$http->setCallback("/sendfile2", "_sendfile2");
 	$http->setCallback("/arrayjson", "_arrayjson");
-	$http->setCallback("/arrayjson", "_gophp");
+	$http->setCallback("/gophp", "_gophp");
 	$http->setDefaultCallback("_default", "custom data value");
 	
 	$http->bind($LISTEN_IP, $LISTEN_PORT);
