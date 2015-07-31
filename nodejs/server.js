@@ -2,7 +2,12 @@ var http = require('http');
 var path = require('path');
 var fileSystem = require('fs');
 var url = require('url');
+var cluster = require('cluster');
+var numCPUs = require('os').cpus().length;
 
+function _gonode(res) {
+	
+}
 
 function _helloworld(res) {
 	res.end("Hello World!");
@@ -44,12 +49,23 @@ var routes = {
     '/helloworld' : _helloworld,
     '/sendfile1' : _sendfile1,
     '/sendfile2' : _sendfile2,
-	'/arrayjson' : _arrayjson
+    '/arrayjson' : _arrayjson,
+    '/gonode'    : _gonode
 };
 
-http.createServer(function (req, res) {
 
-	var path = url.parse(req.url).pathname
+if (cluster.isMaster) {
+  // Fork workers.
+  for (var i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+
+  cluster.on('exit', function(worker, code, signal) {
+    console.log('worker ' + worker.process.pid + ' died');
+  });
+} else {
+  http.createServer(function(req, res) {
+    var path = url.parse(req.url).pathname
 	var fn = routes[path];
 	if(typeof fn === 'function') {
 		fn(res);
@@ -57,7 +73,5 @@ http.createServer(function (req, res) {
 		// no define route
 		res.end('');
 	}
-
-
-}).listen(8080, '0.0.0.0');
-
+  }).listen(8000, '0.0.0.0');
+}
