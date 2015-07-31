@@ -2,7 +2,28 @@
 	$LISTEN_PORT	= 8080;
 	$LISTEN_IP		= "0.0.0.0";
 	
-
+	function _gophp($req) {
+		$req->getOutputBuffer()->add("Hello World!");
+		$req->getOutputBuffer()->add(file_get_contents("../files/sendfile1.html"));
+		$req->getOutputBuffer()->add(file_get_contents("../files/sendfile2.html"));
+		
+		$arr1 = array();
+		$arr2 = array();
+		$arr3 = array();
+		for($i=0; $i<100;$i++) {
+			$arr1[$i] = $i;
+			$arr2[$i] = $i*(-1);
+			$arr3[$i] = "s : " .$i;
+		}
+		$arr = array(
+			'a' => $arr1,
+			'b' => $arr2,
+			'c' => $arr3,
+		);
+		$req->getOutputBuffer()->add(json_encode($arr));
+		
+		$req->sendReply(200,"OK");
+	}
 	function _helloworld($req) {
 		$req->getOutputBuffer()->add("Hello World!");
 		$req->sendReply(200,"OK");
